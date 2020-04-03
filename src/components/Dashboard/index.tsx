@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { createMuiTheme, createStyles, WithStyles, ThemeProvider, withStyles } from "@material-ui/core/styles";
 import { CssBaseline, Hidden, Typography, Link } from "@material-ui/core";
 import Navigator from '../Navigator';
 import Header from "../Header";
 import Patients from "../Patients";
+import { IPatients } from "../../models/types";
+import { getPatients } from "../../api/patients";
 
 function Copyright() {
     return (
@@ -157,46 +159,79 @@ const styles = createStyles({
     },
 });
 
+const initialPatients: IPatients = {
+    value: [
+        {
+            id: 0,
+            name: '',
+            email: '',
+            avatarUrl: '',
+            rol: 2,
+            listSickness: []
+        }
+    ]
+};
+
 export interface PaperbaseProps extends WithStyles<typeof styles> { }
 
 function Paperbase(props: PaperbaseProps) {
     const { classes } = props;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [patients, setPatients] = useState(initialPatients);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    useEffect(() => {
+        async function getAllPatients() {
+            const response = await getPatients();
+            setPatients(response.data);
+        };
+        getAllPatients();
+    }, []);
+
     return (
-        <ThemeProvider theme={theme}>
-            <div className={classes.root}>
-                <CssBaseline />
-                <nav className={classes.drawer}>
-                    <Hidden smUp implementation="js">
-                        <Navigator
-                            PaperProps={{ style: { width: drawerWidth } }}
-                            variant="temporary"
-                            open={mobileOpen}
-                            onClose={handleDrawerToggle}
-                        />
-                    </Hidden>
-                    <Hidden xsDown implementation="css">
-                        <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-                    </Hidden>
-                </nav>
-                <div className={classes.app}>
-                    <Header onDrawerToggle={handleDrawerToggle} />
-                    <main className={classes.main}>
-                        <Patients />
-                    </main>
-                    {
-                        <footer className={classes.footer}>
-                            <Copyright />
-                        </footer>
-                    }
+        <Fragment>
+            <ThemeProvider theme={theme}>
+                <div className={classes.root}>
+                    <CssBaseline />
+                    <nav className={classes.drawer}>
+                        <Hidden smUp implementation="js">
+                            <Navigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                            />
+                        </Hidden>
+                        <Hidden xsDown implementation="css">
+                            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                        </Hidden>
+                    </nav>
+                    <div className={classes.app}>
+                        <Header onDrawerToggle={handleDrawerToggle} />
+                        <main className={classes.main}>
+                            {
+                                (() => {
+                                    if (patients.value.length > 0) {
+                                        return <Patients value={patients.value} />
+                                    } else {
+                                        return <h1>No data found</h1>;
+                                    }
+                                })()
+                            }
+                        </main>
+                        {
+                            <footer className={classes.footer}>
+                                <Copyright />
+                            </footer>
+                        }
+                    </div>
                 </div>
-            </div>
-        </ThemeProvider>
+            </ThemeProvider>
+        </Fragment>
+
     );
 }
 
