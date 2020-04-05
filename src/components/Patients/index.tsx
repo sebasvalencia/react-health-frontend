@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { postPatient, getAllPatients, deletePatient } from '../../api/patients';
+import { postPatient, getAllPatients, deletePatient, updatePatient } from '../../api/patients';
 import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions, makeStyles, createStyles, Theme, Avatar } from "@material-ui/core";
 import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
 import { Patient } from "../../models/types";
@@ -12,6 +12,8 @@ type PatientsState = {
     avatarUrl: string;
     loadingPatients: boolean;
     isHidden: boolean;
+    isEditable: boolean;
+    patient: Patient;
     patients: Patient[];
 }
 
@@ -23,6 +25,15 @@ class Patients extends Component<{}, PatientsState> {
         avatarUrl: "",
         loadingPatients: false,
         isHidden: true,
+        isEditable: false,
+        patient: {
+            id: 0,
+            name: "",
+            email: "",
+            avatarUrl: "",
+            rol: 2,
+            listSickness: []
+        },
         patients: []
     }
 
@@ -51,25 +62,47 @@ class Patients extends Component<{}, PatientsState> {
     handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const newPatient = {
-            Name: this.state.name,
-            Email: this.state.email,
-            AvatarUrl: this.state.avatarUrl,
-            Rol: 2
+        if (this.state.isEditable) {
+            const patientToUpdate = {
+                Id: this.state.patient.id,
+                Name: this.state.name,
+                Email: this.state.email,
+                AvatarUrl: this.state.avatarUrl,
+                Rol: this.state.patient.rol
+            };
+
+            updatePatient(patientToUpdate).then(response => {
+                const newPatientsState = this.state.patients.map((obj: any) => {
+                    return obj.id === this.state.patient.id ? response.data.value : obj
+                });
+                this.setState({ patients: newPatientsState });
+            }).catch(error => {
+                console.log('err', error);
+            });
+
+        } else {
+            const newPatient = {
+                Name: this.state.name,
+                Email: this.state.email,
+                AvatarUrl: this.state.avatarUrl,
+                Rol: 2
+            }
+
+            postPatient(newPatient).then(response => {
+                this.setState({ patients: [...this.state.patients, response.data.value] });
+            }).catch(error => {
+                console.log('err', error);
+            });
         }
 
-        postPatient(newPatient).then(response => {
-            this.setState({ patients: [...this.state.patients, response.data.value] });
-        }).catch(error => {
-            console.log('err', error);
-        });
+
     };
 
     showAvatar = (avatarUrl: string) => {
-        console.log( (avatarUrl !== null || avatarUrl !== "") ? avatarUrl : avatar);
+        console.log((avatarUrl !== null || avatarUrl !== "") ? avatarUrl : avatar);
         return avatar;
     }
-    
+
     removePatient = (patient: Patient) => {
         const patientToDelete = {
             Id: patient.id,
@@ -80,12 +113,21 @@ class Patients extends Component<{}, PatientsState> {
         };
 
         deletePatient(patientToDelete).then(response => {
-            if(response.data.value){
-            this.setState({patients:  this.state.patients.filter((p: any) => p.id !== patient.id)  }); 
+            if (response.data.value) {
+                this.setState({ patients: this.state.patients.filter((p: any) => p.id !== patient.id) });
             }
         }).catch(error => {
             console.log('err', error);
         });
+    }
+
+    editPatient = (patient: Patient) => {
+        this.setState({ isHidden: false });
+        this.setState({ isEditable: true });
+        this.setState({ patient: patient });
+        this.setState({ name: patient.name });
+        this.setState({ email: patient.email });
+        this.setState({ avatarUrl: patient.avatarUrl });
     }
 
     render() {
@@ -107,60 +149,63 @@ class Patients extends Component<{}, PatientsState> {
                                         type="text"
                                         placeholder="name"
                                         name="name"
+                                        value={this.state.name}
                                         onChange={this.handleInput}
                                     />
                                     <Input
                                         type="text"
                                         placeholder="email"
                                         name="email"
+                                        value={this.state.email}
                                         onChange={this.handleInput}
                                     />
                                     <Input
                                         type="text"
                                         placeholder="avatarUrl"
                                         name="avatarUrl"
+                                        value={this.state.avatarUrl}
                                         onChange={this.handleInput}
                                     />
                                     <Button variant="contained" color="primary" onClick={this.handleSubmit}>
-                                        Add Patient
+                                        {this.state.isEditable ? "Edit" : "Add"}
                                     </Button>
                                 </form>
                             )
                         }
                         <div className='root'>
-                            <Grid container 
-                            spacing={3}
+                            <Grid container
+                                spacing={3}
                             //  alignItems="stretch"
-                            
-                             >
+
+                            >
                                 {
                                     this.state.patients.map((patient: Patient) => (
 
-                                        <Grid key={patient.id} 
-                                              item
-                                              >
-                                            <Card  style={{maxWidth: 345}}>
-                                                <CardMedia 
-                                                image={avatar} 
-                                                style={{paddingTop: '56.25%', height: 140}}
-                                                title={patient.name} />
-                                                      
+                                        <Grid key={patient.id}
+                                            item
+                                        >
+                                            <Card style={{ maxWidth: 345 }}>
+                                                <CardMedia
+                                                    image={avatar}
+                                                    style={{ paddingTop: '56.25%', height: 140 }}
+                                                    title={patient.name} />
+
                                                 <CardContent>
                                                     <ul>
-                                                        <li style={{textOverflow: "ellipsis"}}>Name: {patient.name}</li>
+                                                        <li style={{ textOverflow: "ellipsis" }}>Name: {patient.name}</li>
                                                         <li>Email: {patient.email}</li>
                                                     </ul>
                                                 </CardContent>
                                                 <CardActions>
-                                                    <Button 
-                                                    // onClick={() => this.editPatient(patient)}
+                                                    <Button
+                                                        onClick={() => this.editPatient(patient)}
                                                     >
                                                         <Edit />
                                                     </Button>
                                                     <Button onClick={() => this.removePatient(patient)}>
                                                         <Delete />
                                                     </Button>
-                                                    <Button 
+                                                    <Button
                                                     // onClick={() => this.handleShowSickness(patient)}
                                                     >
                                                         <LocalHospital />
