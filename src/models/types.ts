@@ -26,3 +26,8 @@ export type Sickness = {
   Description: string;
   ImageUrl: string;
 };
+
+export type Credentials = {
+  Email: string;
+  Password: string;
+}
