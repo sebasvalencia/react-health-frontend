@@ -43,6 +43,7 @@ const styles = (theme: Theme) =>
 
 interface HeaderProps extends WithStyles<typeof styles> {
   onDrawerToggle: () => void;
+  title: string;
 }
 
 function Header(props: HeaderProps) {
@@ -97,7 +98,7 @@ function Header(props: HeaderProps) {
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
               <Typography color="inherit" variant="h5" component="h1">
-                Patients
+                {props.title}
               </Typography>
             </Grid>
             {/* <Grid item>

@@ -1,11 +1,17 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { createMuiTheme, createStyles, WithStyles, ThemeProvider, withStyles } from "@material-ui/core/styles";
-import { CssBaseline, Hidden, Typography, Link } from "@material-ui/core";
-import Navigator from '../Navigator';
+import React, {useState} from "react";
+import { createMuiTheme, createStyles, WithStyles, ThemeProvider, withStyles, Theme } from "@material-ui/core/styles";
+import { CssBaseline, Typography, List, ListItem, ListItemIcon, ListItemText, DrawerProps, Link} from "@material-ui/core";
 import Header from "../Header";
-import Patients from "../Patients";
-import { IPatients } from "../../models/types";
-import { getPatients } from "../../api/patients";
+import Patients from "../Patients/index";
+import clsx from 'clsx';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link as LinkRouter
+} from "react-router-dom";
+import Sickness from "../Sickness";
+import HomeIcon from '@material-ui/icons/Home';
 
 function Copyright() {
     return (
@@ -13,14 +19,14 @@ function Copyright() {
             {'Copyright © '}
             <Link color="inherit" href="https://github.com/sebasvalencia">
                 Sebastián Valencia Navarro
-        </Link>{' '}
+            </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
     );
 }
 
-let theme = createMuiTheme({
+let theme2 = createMuiTheme({
     palette: {
         primary: {
             light: '#63ccff',
@@ -50,8 +56,8 @@ let theme = createMuiTheme({
     },
 });
 
-theme = {
-    ...theme,
+theme2 = {
+    ...theme2,
     overrides: {
         MuiDrawer: {
             paper: {
@@ -71,13 +77,13 @@ theme = {
         },
         MuiTabs: {
             root: {
-                marginLeft: theme.spacing(1),
+                marginLeft: theme2.spacing(1),
             },
             indicator: {
                 height: 3,
                 borderTopLeftRadius: 3,
                 borderTopRightRadius: 3,
-                backgroundColor: theme.palette.common.white,
+                backgroundColor: theme2.palette.common.white,
             },
         },
         MuiTab: {
@@ -86,7 +92,7 @@ theme = {
                 margin: '0 16px',
                 minWidth: 0,
                 padding: 0,
-                [theme.breakpoints.up('md')]: {
+                [theme2.breakpoints.up('md')]: {
                     padding: 0,
                     minWidth: 0,
                 },
@@ -94,7 +100,7 @@ theme = {
         },
         MuiIconButton: {
             root: {
-                padding: theme.spacing(1),
+                padding: theme2.spacing(1),
             },
         },
         MuiTooltip: {
@@ -109,7 +115,7 @@ theme = {
         },
         MuiListItemText: {
             primary: {
-                fontWeight: theme.typography.fontWeightMedium,
+                fontWeight: theme2.typography.fontWeightMedium,
             },
         },
         MuiListItemIcon: {
@@ -132,108 +138,183 @@ theme = {
 
 const drawerWidth = 256;
 
-const styles = createStyles({
-    root: {
-        display: 'flex',
-        minHeight: '100vh',
-    },
-    drawer: {
-        [theme.breakpoints.up('sm')]: {
-            width: drawerWidth,
-            flexShrink: 0,
+
+const styles = (theme: Theme) =>
+    createStyles({
+        categoryHeader: {
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
         },
-    },
-    app: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    main: {
-        flex: 1,
-        padding: theme.spacing(6, 4),
-        background: '#eaeff1',
-    },
-    footer: {
-        padding: theme.spacing(2),
-        background: '#eaeff1',
-    },
-});
+        categoryHeaderPrimary: {
+            color: theme.palette.common.white,
+        },
+        item: {
+            paddingTop: 1,
+            paddingBottom: 1,
+            color: '#4fc3f7',
+            '&:hover,&:focus': {
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            },
+            
+        },
+        itemCategory: {
+            backgroundColor: '#232f3e',
+            boxShadow: '0 -1px 0 #404854 inset',
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+        },
+        firebase: {
+            fontSize: 24,
+            color: theme.palette.common.white,
+        },
+        itemActiveItem: {
+            color: '#4fc3f7',
+        },
+        itemPrimary: {
+            fontSize: 'inherit',
+        },
+        itemIcon: {
+            minWidth: 'auto',
+            marginRight: theme.spacing(2),
+        },
+        divider: {
+            marginTop: theme.spacing(2),
+        },
+        root: {
+            display: 'flex',
+            minHeight: '100vh',
+        },
+        drawer: {
+            [theme2.breakpoints.up('sm')]: {
+                width: drawerWidth,
+                flexShrink: 0,
+                background:'#232f3e',
+            },
+        },
+        app: {
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            border: '1px solid black',
+        },
+        main: {
+            flex: 1,
+            padding: theme2.spacing(6, 4),
+            background: '#eaeff1',
+        },
+        footer: {
+            padding: theme2.spacing(2),
+            background: '#eaeff1',
+        },
 
-const initialPatients: IPatients = {
-    value: [
-        {
-            id: 0,
-            name: '',
-            email: '',
-            avatarUrl: '',
-            rol: 2,
-            listSickness: []
-        }
-    ]
-};
+    });
 
-export interface PaperbaseProps extends WithStyles<typeof styles> { }
-
+export interface PaperbaseProps extends Omit<DrawerProps, 'classes'>, WithStyles<typeof styles> { }
+const routes = [
+    {
+        path: "/",
+        exact: true,
+        sidebar: () => <div>Home!</div>,
+        main: () => <h2>Home</h2>,
+        title: 'Home'
+    },
+    {
+        path: "/Sickness",
+        sidebar: () => <div>sickness!</div>,
+        main: () => <h2>Sick</h2>,
+        title: 'Sickness',
+        componentToRender: Sickness
+    },
+    {
+        path: "/Patients",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>Shoelaces</h2>,
+        title: 'Patients',
+        componentToRender: Patients
+    }
+];
 function Paperbase(props: PaperbaseProps) {
+
     const { classes } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [patients, setPatients] = useState(initialPatients);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    useEffect(() => {
-        async function getAllPatients() {
-            const response = await getPatients();
-            setPatients(response.data);
-        };
-        getAllPatients();
-    }, []);
-
     return (
-        <Fragment>
-            <ThemeProvider theme={theme}>
-                <div className={classes.root}>
-                    <CssBaseline />
-                    <nav className={classes.drawer}>
-                        <Hidden smUp implementation="js">
-                            <Navigator
-                                PaperProps={{ style: { width: drawerWidth } }}
-                                variant="temporary"
-                                open={mobileOpen}
-                                onClose={handleDrawerToggle}
-                            />
-                        </Hidden>
-                        <Hidden xsDown implementation="css">
-                            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-                        </Hidden>
-                    </nav>
-                    <div className={classes.app}>
-                        <Header onDrawerToggle={handleDrawerToggle} />
-                        <main className={classes.main}>
-                            {
-                                (() => {
-                                    if (patients.value.length > 0) {
-                                        return <Patients value={patients.value} />
-                                    } else {
-                                        return <h1>No data found</h1>;
-                                    }
-                                })()
-                            }
-                        </main>
-                        {
-                            <footer className={classes.footer}>
-                                <Copyright />
-                            </footer>
-                        }
-                    </div>
-                </div>
-            </ThemeProvider>
-        </Fragment>
+        <ThemeProvider theme={theme2}>
+            <div className={classes.root}>
+                <CssBaseline />
+                <Router>
+                    <div className={classes.drawer}>
+                        <List disablePadding>
+                            <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
+                                Medical App
+                            </ListItem>
+                            <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                <ListItemText classes={{ primary: classes.itemPrimary, }}>
+                                    Project Overview
+                                </ListItemText>
+                            </ListItem>
 
-    );
+                            <List disablePadding>
+                                <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <LinkRouter to="/Patients" className={classes.itemActiveItem}><ListItemText>Patients</ListItemText></LinkRouter>
+                                </ListItem>
+                                <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <LinkRouter to="/sickness" className={classes.itemActiveItem}><ListItemText>Sickness</ListItemText></LinkRouter>
+                                </ListItem>
+                                <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <LinkRouter to="/medicalHistory" className={classes.itemActiveItem}><ListItemText>Medical History</ListItemText></LinkRouter>
+                                </ListItem>
+                                <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <LinkRouter to="/wellness" className={classes.itemActiveItem}><ListItemText>Wellness</ListItemText></LinkRouter>
+                                </ListItem>
+                            </List>
+
+                        </List>
+
+                    </div>
+                    <div className={classes.app}>
+
+                        <Switch>
+                            {routes.map((route, index) => (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    exact={route.exact}
+                                    children={<Header onDrawerToggle={handleDrawerToggle} title={route.title} />}
+                                />
+                            ))}
+                        </Switch>
+
+                        <main className={classes.main}>
+                            <Switch>
+                                {routes.map((route, index) => (
+                                    <Route
+                                        key={index}
+                                        path={route.path}
+                                        exact={route.exact}
+                                        component={route.componentToRender}
+                                    />
+                                ))}
+                            </Switch>
+                        </main>
+
+                        <footer className={classes.footer}>
+                            <Copyright />
+                        </footer>
+                    </div>
+                </Router>
+            </div>
+        </ThemeProvider>
+    )
 }
 
 export default withStyles(styles)(Paperbase);
-
