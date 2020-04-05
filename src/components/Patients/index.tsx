@@ -1,289 +1,162 @@
-import React, { useState, useEffect } from 'react';
-import { CardMedia, Card, CardContent, CardActions, Button, Theme, createStyles, TextField, Fab, Typography, Input } from '@material-ui/core';
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid } from '@material-ui/core';
-
-import { Delete, Edit, LocalHospital, Add } from '@material-ui/icons';
-
-
-import { Patient, IPatients, PatientToSave } from '../../models/types';
-
+import React, { Component, Fragment } from "react";
+import { postPatient, getAllPatients } from "../../api/patients";
+import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions, makeStyles, createStyles, Theme, Avatar } from "@material-ui/core";
+import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
+import { Patient } from "../../models/types";
 import avatar from '../../assets/images/img_avatar.png';
-import { postPatient, updatePatient } from '../../api/patients';
+import imG from "../../../public/images/1.jpg";
+import "./patients.css";
 
-const useStylesCard = makeStyles({
-  media: {
-    height: 200,
-  }
-});
+type PatientsState = {
+    name: string;
+    email: string;
+    avatarUrl: string;
+    loadingPatients: boolean;
+    isHidden: boolean;
+    patients: Patient[];
+}
 
-const useStylesClasses = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    paper: {
-      // padding: theme.spacing(2),
-      textAlign: 'center',
-      color: theme.palette.text.primary,
-      border: "1px solid black",
-      boxShadow: "1px 1px 1px 1px red",
-    },
-    addButton: {
-      margin: theme.spacing(2),
-      color: theme.palette.text.primary,
-    }
-  }),
-);
-const initialPatients: IPatients = {
-  value: [
-    {
-      id: 0,
-      name: '',
-      email: '',
-      avatarUrl: '',
-      rol: 2,
-      listSickness: []
-    }
-  ]
-};
-function Patients(props: IPatients) {
+class Patients extends Component<{}, PatientsState> {
 
-  console.log(props);
-  
-
-  const classesCard = useStylesCard();
-  const classes = useStylesClasses();
-
-  const [patients, setPatients] = useState<IPatients>(initialPatients);
-  const [patient, setPatient] = useState<Patient>();
-  const [partialPatient, setPartialPatient] = useState();
-  
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  
-  const [openFormAddPatient, setOpenFormAddPatient] = useState(false);
-  const [isEditable, setIsEditable] = useState(false);
-
-  useEffect(() => {
-    setPatients(props);
-  }, [props])
-
-  const showFormAddPatient = () => {
-    setOpenFormAddPatient(true);
-  }
-
-  const deletePatient = (patient: Patient) => {
-    console.log('deleteSickness',patient);
-    //   const newUsers = users.filter((sickness: any) => sickness.id !== id);
-    // console.log('newUsers', newUsers)
-    // setUsers(newUsers);
-    // setUser(initialPatient);
-  }
-
-  const editPatient = (patient: Patient) => {
-    console.log('editPatient', patient);
-    setIsEditable(true);
-    
-    if(patient.name === null){
-      setName("");
-    }else{
-      setName(patient.name);
-    }
-    if(patient.email === null){
-      setEmail("");
-    }else{
-      setEmail(patient.email);
-    }
-    if(patient.avatarUrl === null){
-      setAvatarUrl("");
-    }else{
-      setAvatarUrl(patient.avatarUrl);
+    state = {
+        name: "",
+        email: "",
+        avatarUrl: "",
+        loadingPatients: false,
+        isHidden: true,
+        patients: []
     }
 
-
-
-    setPatient(patient);
-  }
-
-
-
-  const handleShowSickness = (patient: Patient) => {
-    console.log("handleShowSickness", patient);
-    // setOpen(true);
-  }
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-  //   event.preventDefault();
-  //   console.log('value>', event.target.value, 'useer', patient);
-  //   if (!isEditable) {
-  //     setPatient({
-  //       name: event.target.value,
-  //       email: "a@a.com",
-  //       avatarUrl: "https://celiacos.org/wp-content/uploads/2020/03/coronavirus-768x432.jpeg",
-  //       rol:2,
-  //       listSickness: []
-  //     });
-  //   } else {
-  //     const index = users.findIndex(item => item.id === user.id)
-  //     setUser({
-  //       id: user.id,
-  //       name: event.target.value,
-  //       email: "a@a.com",
-  //       avatarUrl: "https://celiacos.org/wp-content/uploads/2020/03/coronavirus-768x432.jpeg",
-  //       rol:2,
-  //       listSickness: []
-  //     });
-
-  //     users.splice(index, 1, user)
-  //     setUsers(users);
-  //     console.log('updateUser', users)
-  //   }
-  // }
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-  //   event.preventDefault();
-  //   console.log('value>', event.target.value, 'patient', patient);
-  // }
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
-    var patientToSave = {
-      Name: name,
-      Email: email,
-      AvatarUrl: avatarUrl,
-      Rol: 2
+    componentDidMount() {
+        getAllPatients().then(response => {
+            console.log('response', response);
+            this.setState({ loadingPatients: true });
+            this.setState({ patients: response.data.value });
+        }).catch(error => {
+            console.log('error:', error);
+            this.setState({ loadingPatients: false });
+        });
     }
 
-    postPatient(patientToSave).then((response) => {
-          var newPatient: Patient = response.data.value;
-          console.log('resp', newPatient);
-          console.log('patients', patients.value);
-        
-          setPatient(newPatient);
-          const newIP: IPatients = {value: [newPatient]};
+    toggleFormCreatePatient = () => {
+        this.setState({
+            isHidden: !this.state.isHidden
+        });
+    }
 
-          console.log('newIP', newIP);
-          // setPatients([...patients,  ]);
+    handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name } = event.target;
+        this.setState({ [name]: event.target.value } as any);
+    };
 
+    handleSubmit = (event: any) => {
+        event.preventDefault();
+
+        const newPatient = {
+            Name: this.state.name,
+            Email: this.state.email,
+            AvatarUrl: this.state.avatarUrl,
+            Rol: 2
         }
-    );
-        
-    clearFormFields();
-    
-  }
 
-  const clearFormFields = () => {
-    setName("");
-    setEmail("");
-    setAvatarUrl("");
-  }
+        postPatient(newPatient).then(response => {
+            console.log(response.data.value);
+            this.setState({ patients: [...this.state.patients, response.data.value] });
+        }).catch(error => {
+            console.log('err', error);
+        });
+    };
 
-  const handleEdit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    setIsEditable(false);
+    showAvatar = (avatarUrl: string) => {
+        console.log( (avatarUrl !== null || avatarUrl !== "") ? avatarUrl : avatar);
+        return avatar;
+    } 
 
-    var patientToSave = {
-      Id: patient?.id,
-      Name: name,
-      Email: email,
-      AvatarUrl: avatarUrl,
-      Rol: 2
+    render() {
+        return (
+            this.state.loadingPatients ?
+                (
+                    //condition 0 patients
+                    <Fragment>
+                        <Fab color="primary" aria-label="add">
+                            <Add onClick={this.toggleFormCreatePatient} />
+                        </Fab>
+                        {
+                            !this.state.isHidden && (
+                                <form action="#">
+                                    <Typography variant="h3" gutterBottom>
+                                        Add Patient
+                                    </Typography>
+                                    <Input
+                                        type="text"
+                                        placeholder="name"
+                                        name="name"
+                                        onChange={this.handleInput}
+                                    />
+                                    <Input
+                                        type="text"
+                                        placeholder="email"
+                                        name="email"
+                                        onChange={this.handleInput}
+                                    />
+                                    <Input
+                                        type="text"
+                                        placeholder="avatarUrl"
+                                        name="avatarUrl"
+                                        onChange={this.handleInput}
+                                    />
+                                    <Button variant="contained" color="primary" onClick={this.handleSubmit}>
+                                        Add Patient
+                                    </Button>
+                                </form>
+                            )
+                        }
+                        <div className='root'>
+                            <Grid container spacing={3}>
+                                {
+                                    this.state.patients.map((patient: Patient) => (
+
+                                        <Grid key={patient.id} item xs>
+                                            <Card className='paper'>
+                                                <CardMedia 
+                                                className="media"
+                                                image={imG} 
+                                                title={patient.name} />
+                                                      <CardMedia
+                                                        image="/public/images/paella.jpg"
+                                                        title="Paella dish"
+                                                    />
+                                                <CardContent>
+                                                    <ul>
+                                                        <li>Name: {patient.name}</li>
+                                                        <li>Email: {patient.email}</li>
+                                                    </ul>
+                                                </CardContent>
+                                                <CardActions>
+                                                    {/* <Button onClick={() => this.editPatient(patient)}>
+                                                        <Edit />
+                                                    </Button>
+                                                    <Button onClick={() => this.deletePatient(patient)}>
+                                                        <Delete />
+                                                    </Button>
+                                                    <Button onClick={() => this.handleShowSickness(patient)}>
+                                                        <LocalHospital />
+                                                    </Button> */}
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+
+                                    ))}
+                            </Grid>
+                        </div>
+                    </Fragment>
+                )
+                :
+                (
+                    <h1>Sorry an error occurs trying to load patients</h1>
+                )
+        )
     }
-    callUpdate(patientToSave);
-  }
-
-  const callUpdate = (patientToSave: PatientToSave) => {
-    updatePatient(patientToSave).then((response) => {
-      console.log('response', response.data.value);
-    });
-
-    console.log('patients', patients);
-    
-  }
-
-  return (
-
-    <React.Fragment>
-      <Fab color="primary" aria-label="add">
-        <Add onClick={showFormAddPatient} />
-      </Fab>
-
-      {
-        openFormAddPatient &&
-
-        <form onSubmit={isEditable ? handleEdit : handleSubmit}>
-          <Input
-            type="text"
-            placeholder="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            type="text"
-            placeholder="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            type="text"
-            placeholder="avatarUrl"
-            name="avatarUrl"
-            value={avatarUrl}
-            onChange={(e) => setAvatarUrl(e.target.value)}
-          />
-
-          <Button variant="contained" color="primary" type="submit">
-            {isEditable ? "Edit" : "Add"}
-          </Button>
-        </form>
-
-      }
-
-
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-
-          {
-            patients.value.map((patient: Patient) => (
-
-              <Grid key={patient.id} item xs>
-                <Card className={classes.paper}>
-                  <CardMedia className={classesCard.media} image={patient.avatarUrl ? patient.avatarUrl : avatar} title={patient.name} />
-                  <CardContent>
-                    <ul>
-                      <li>Name: {patient.name}</li>
-                      <li>Email: {patient.email}</li>
-                    </ul>
-                  </CardContent>
-                  <CardActions>
-                    <Button onClick={() => editPatient(patient)}>
-                      <Edit />
-                    </Button>
-                    <Button onClick={() => deletePatient(patient)}>
-                      <Delete />
-                    </Button>
-                    <Button onClick={() => handleShowSickness(patient)}>
-                      <LocalHospital />
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-
-            ))}
-        </Grid>
-      </div>
-    </React.Fragment>
-  );
 }
 
 export default Patients;

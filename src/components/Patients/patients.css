@@ -1,0 +1,22 @@
+
+.card {
+    height: 140;
+  }
+
+.root {
+    flex-grow: 1;
+} 
+
+.paper {
+    text-align: center;
+    color: blue;
+    border: "1px solid black";
+    box-shadow: "1px 1px 1px 1px red";
+}
+
+.addButton {
+    margin: 2px;
+    color: green,
+}
+
+
