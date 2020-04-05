@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from "react";
-import { postPatient, getAllPatients } from "../../api/patients";
+import { postPatient, getAllPatients, deletePatient } from '../../api/patients';
 import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions, makeStyles, createStyles, Theme, Avatar } from "@material-ui/core";
 import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
 import { Patient } from "../../models/types";
 import avatar from '../../assets/images/img_avatar.png';
-import imG from "../../../public/images/1.jpg";
 import "./patients.css";
 
 type PatientsState = {
@@ -60,7 +59,6 @@ class Patients extends Component<{}, PatientsState> {
         }
 
         postPatient(newPatient).then(response => {
-            console.log(response.data.value);
             this.setState({ patients: [...this.state.patients, response.data.value] });
         }).catch(error => {
             console.log('err', error);
@@ -70,7 +68,25 @@ class Patients extends Component<{}, PatientsState> {
     showAvatar = (avatarUrl: string) => {
         console.log( (avatarUrl !== null || avatarUrl !== "") ? avatarUrl : avatar);
         return avatar;
-    } 
+    }
+    
+    removePatient = (patient: Patient) => {
+        const patientToDelete = {
+            Id: patient.id,
+            Name: patient.name,
+            Email: patient.email,
+            AvatarUrl: patient.avatarUrl,
+            Rol: patient.rol
+        };
+
+        deletePatient(patientToDelete).then(response => {
+            if(response.data.value){
+            this.setState({patients:  this.state.patients.filter((p: any) => p.id !== patient.id)  }); 
+            }
+        }).catch(error => {
+            console.log('err', error);
+        });
+    }
 
     render() {
         return (
@@ -112,36 +128,43 @@ class Patients extends Component<{}, PatientsState> {
                             )
                         }
                         <div className='root'>
-                            <Grid container spacing={3}>
+                            <Grid container 
+                            spacing={3}
+                            //  alignItems="stretch"
+                            
+                             >
                                 {
                                     this.state.patients.map((patient: Patient) => (
 
-                                        <Grid key={patient.id} item xs>
-                                            <Card className='paper'>
+                                        <Grid key={patient.id} 
+                                              item
+                                              >
+                                            <Card  style={{maxWidth: 345}}>
                                                 <CardMedia 
-                                                className="media"
-                                                image={imG} 
+                                                image={avatar} 
+                                                style={{paddingTop: '56.25%', height: 140}}
                                                 title={patient.name} />
-                                                      <CardMedia
-                                                        image="/public/images/paella.jpg"
-                                                        title="Paella dish"
-                                                    />
+                                                      
                                                 <CardContent>
                                                     <ul>
-                                                        <li>Name: {patient.name}</li>
+                                                        <li style={{textOverflow: "ellipsis"}}>Name: {patient.name}</li>
                                                         <li>Email: {patient.email}</li>
                                                     </ul>
                                                 </CardContent>
                                                 <CardActions>
-                                                    {/* <Button onClick={() => this.editPatient(patient)}>
+                                                    <Button 
+                                                    // onClick={() => this.editPatient(patient)}
+                                                    >
                                                         <Edit />
                                                     </Button>
-                                                    <Button onClick={() => this.deletePatient(patient)}>
+                                                    <Button onClick={() => this.removePatient(patient)}>
                                                         <Delete />
                                                     </Button>
-                                                    <Button onClick={() => this.handleShowSickness(patient)}>
+                                                    <Button 
+                                                    // onClick={() => this.handleShowSickness(patient)}
+                                                    >
                                                         <LocalHospital />
-                                                    </Button> */}
+                                                    </Button>
                                                 </CardActions>
                                             </Card>
                                         </Grid>

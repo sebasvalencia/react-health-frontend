@@ -3,25 +3,24 @@ import axios from "axios";
 import { PatientToSave } from "../models/types";
 const urlEndpoints = "https://localhost:5001/api";
 
-
 export const login = (credentials: Credentials) =>
   axios.post<{ value: string }>("https://localhost:5001/api/user/login", {
-    ...credentials
+    ...credentials,
   });
 
-  export const postPatient = async (patient: PatientToSave) => {
-    return await axios(`${urlEndpoints}/user`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      data: patient,
-    });
-  };
+export const postPatient = async (patient: PatientToSave) => {
+  return await axios(`${urlEndpoints}/user`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    data: patient,
+  });
+};
 
-  export const getAllPatients = async () => {
-    return await axios.get(`${urlEndpoints}/user/patients`);
-  };
+export const getAllPatients = async () => {
+  return await axios.get(`${urlEndpoints}/user/patients`);
+};
 
 export const getPatientsWithSickness = async () => {
   return await axios.get(`${urlEndpoints}/user`);
@@ -46,5 +45,3 @@ export const deletePatient = async (patient: PatientToSave) => {
     data: patient,
   });
 };
-
-
