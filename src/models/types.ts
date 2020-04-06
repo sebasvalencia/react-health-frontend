@@ -8,26 +8,34 @@ export type Patient = {
   email: string;
   avatarUrl: string;
   rol: number;
-  listSickness?: Sickness[];
+  listSickness?: ISickness[];
 };
 
 export type PatientToSave = {
-  Id?: number;  
+  Id?: number;
   Name: string;
   Email: string;
   AvatarUrl: string;
   Rol: number;
 };
 
-export type Sickness = {
-  id: number;
-  name: string;
+export type ISickness = {
+  Id?: number;
+  Name: string;
   ScientificNotation: string;
   Description: string;
   ImageUrl: string;
 };
 
+export type ISicknessApp = {
+  id: number;
+  name: string;
+  scientificNotation: string;
+  description: string;
+  imageUrl: string;
+};
+
 export type Credentials = {
   Email: string;
   Password: string;
-}
+};
