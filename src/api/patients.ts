@@ -4,7 +4,7 @@ import { PatientToSave } from "../models/types";
 const urlEndpoints = "https://localhost:5001/api";
 
 export const login = (credentials: Credentials) =>
-  axios.post<{ value: string }>("https://localhost:5001/api/user/login", {
+  axios.post<{ value: string }>(`${urlEndpoints}/user/login`, {
     ...credentials,
   });
 
