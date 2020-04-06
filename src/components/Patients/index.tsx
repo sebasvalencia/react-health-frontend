@@ -48,7 +48,7 @@ class Patients extends Component<{}, PatientsState> {
         });
     }
 
-    toggleFormCreatePatient = () => {
+    toggleFormCreateUpdatePatient = () => {
         this.setState({
             isHidden: !this.state.isHidden
         });
@@ -137,7 +137,7 @@ class Patients extends Component<{}, PatientsState> {
                     //condition 0 patients
                     <Fragment>
                         <Fab color="primary" aria-label="add">
-                            <Add onClick={this.toggleFormCreatePatient} />
+                            <Add onClick={this.toggleFormCreateUpdatePatient} />
                         </Fab>
                         {
                             !this.state.isHidden && (
@@ -147,21 +147,21 @@ class Patients extends Component<{}, PatientsState> {
                                     </Typography>
                                     <Input
                                         type="text"
-                                        placeholder="name"
+                                        placeholder="Name"
                                         name="name"
                                         value={this.state.name}
                                         onChange={this.handleInput}
                                     />
                                     <Input
                                         type="text"
-                                        placeholder="email"
+                                        placeholder="Email"
                                         name="email"
                                         value={this.state.email}
                                         onChange={this.handleInput}
                                     />
                                     <Input
                                         type="text"
-                                        placeholder="avatarUrl"
+                                        placeholder="Avatar Url"
                                         name="avatarUrl"
                                         value={this.state.avatarUrl}
                                         onChange={this.handleInput}
