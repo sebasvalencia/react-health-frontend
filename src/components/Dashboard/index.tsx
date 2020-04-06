@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import Sickness from "../Sickness";
 import HomeIcon from '@material-ui/icons/Home';
+import { Person, Note, LocalHospital, SportsHandball } from "@material-ui/icons";
 
 function Copyright() {
     return (
@@ -214,21 +215,15 @@ const routes = [
     {
         path: "/",
         exact: true,
-        sidebar: () => <div>Home!</div>,
-        main: () => <h2>Home</h2>,
         title: 'Home'
     },
     {
         path: "/Sickness",
-        sidebar: () => <div>sickness!</div>,
-        main: () => <h2>Sick</h2>,
         title: 'Sickness',
         componentToRender: Sickness
     },
     {
         path: "/Patients",
-        sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>Shoelaces</h2>,
         title: 'Patients',
         componentToRender: Patients
     }
@@ -261,19 +256,19 @@ function Paperbase(props: PaperbaseProps) {
 
                             <List disablePadding>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><Person /></ListItemIcon>
                                     <LinkRouter to="/Patients" className={classes.itemActiveItem}><ListItemText>Patients</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><LocalHospital /></ListItemIcon>
                                     <LinkRouter to="/sickness" className={classes.itemActiveItem}><ListItemText>Sickness</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><Note /></ListItemIcon>
                                     <LinkRouter to="/medicalHistory" className={classes.itemActiveItem}><ListItemText>Medical History</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><HomeIcon /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><SportsHandball /></ListItemIcon>
                                     <LinkRouter to="/wellness" className={classes.itemActiveItem}><ListItemText>Wellness</ListItemText></LinkRouter>
                                 </ListItem>
                             </List>
