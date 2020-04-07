@@ -39,3 +39,30 @@ export type Credentials = {
   Email: string;
   Password: string;
 };
+
+export type IUserSickness = {
+  Id?: number;
+  Name: string;
+  Email: string;
+  AvatarUrl: string;
+  Rol: number;
+  ListSickness: ISickness[];
+}
+
+export type IUserSicknessApp = {
+  id?: number;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  rol: number;
+  listSickness: ISickness[];
+}
+
+export type IMedicalHistory = {
+  Id?: number;
+  Description: string;
+  Diagnostic: string;
+  Treatment: string;
+  AppointmentDate: Date;
+  
+}

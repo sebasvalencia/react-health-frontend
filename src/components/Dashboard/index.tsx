@@ -3,6 +3,7 @@ import { createMuiTheme, createStyles, WithStyles, ThemeProvider, withStyles, Th
 import { CssBaseline, Typography, List, ListItem, ListItemIcon, ListItemText, DrawerProps, Link} from "@material-ui/core";
 import Header from "../Header";
 import Patients from "../Patients/index";
+import MedicalHistory from '../MedicalHistory/index';
 import clsx from 'clsx';
 import {
     BrowserRouter as Router,
@@ -13,6 +14,7 @@ import {
 import Sickness from "../Sickness";
 import HomeIcon from '@material-ui/icons/Home';
 import { Person, Note, LocalHospital, SportsHandball } from "@material-ui/icons";
+import UserSickness from '../UserSickness/index';
 
 function Copyright() {
     return (
@@ -226,6 +228,16 @@ const routes = [
         path: "/Patients",
         title: 'Patients',
         componentToRender: Patients
+    },
+    {
+        path: "/UserSickness",
+        title: 'USer Sickness',
+        componentToRender: UserSickness
+    },
+    {
+        path: "/MedicalHistory",
+        title: 'Medical History',
+        componentToRender: MedicalHistory
     }
 ];
 function Paperbase(props: PaperbaseProps) {
@@ -262,6 +274,10 @@ function Paperbase(props: PaperbaseProps) {
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
                                     <ListItemIcon className={classes.itemIcon}><LocalHospital /></ListItemIcon>
                                     <LinkRouter to="/sickness" className={classes.itemActiveItem}><ListItemText>Sickness</ListItemText></LinkRouter>
+                                </ListItem>
+                                <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                                    <ListItemIcon className={classes.itemIcon}><LocalHospital /></ListItemIcon>
+                                    <LinkRouter to="/userSickness" className={classes.itemActiveItem}><ListItemText>User Sickness</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
                                     <ListItemIcon className={classes.itemIcon}><Note /></ListItemIcon>

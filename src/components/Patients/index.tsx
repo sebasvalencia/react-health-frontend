@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { postPatient, getAllPatients, deletePatient, updatePatient } from '../../api/patients';
 import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions, makeStyles, createStyles, Theme, Avatar } from "@material-ui/core";
 import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
-import { Patient } from "../../models/types";
+import { Patient } from '../../models/types';
 import avatar from '../../assets/images/img_avatar.png';
 import "./patients.css";
 
@@ -131,6 +131,8 @@ class Patients extends Component<{}, PatientsState> {
     }
 
     render() {
+
+
         return (
             this.state.loadingPatients ?
                 (
@@ -205,11 +207,7 @@ class Patients extends Component<{}, PatientsState> {
                                                     <Button onClick={() => this.removePatient(patient)}>
                                                         <Delete />
                                                     </Button>
-                                                    <Button
-                                                    // onClick={() => this.handleShowSickness(patient)}
-                                                    >
-                                                        <LocalHospital />
-                                                    </Button>
+
                                                 </CardActions>
                                             </Card>
                                         </Grid>
