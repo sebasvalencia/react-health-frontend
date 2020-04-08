@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 import Sickness from "../Sickness";
 import HomeIcon from '@material-ui/icons/Home';
-import { Person, Note, LocalHospital, SportsHandball } from "@material-ui/icons";
+import { Person, Assignment, LocalHospital, SportsHandball, EnhancedEncryption } from "@material-ui/icons";
 import UserSickness from '../UserSickness/index';
 
 function Copyright() {
@@ -231,7 +231,7 @@ const routes = [
     },
     {
         path: "/UserSickness",
-        title: 'USer Sickness',
+        title: 'User Sickness',
         componentToRender: UserSickness
     },
     {
@@ -276,11 +276,11 @@ function Paperbase(props: PaperbaseProps) {
                                     <LinkRouter to="/sickness" className={classes.itemActiveItem}><ListItemText>Sickness</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><LocalHospital /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><EnhancedEncryption /></ListItemIcon>
                                     <LinkRouter to="/userSickness" className={classes.itemActiveItem}><ListItemText>User Sickness</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                                    <ListItemIcon className={classes.itemIcon}><Note /></ListItemIcon>
+                                    <ListItemIcon className={classes.itemIcon}><Assignment /></ListItemIcon>
                                     <LinkRouter to="/medicalHistory" className={classes.itemActiveItem}><ListItemText>Medical History</ListItemText></LinkRouter>
                                 </ListItem>
                                 <ListItem className={clsx(classes.item, classes.itemCategory)}>

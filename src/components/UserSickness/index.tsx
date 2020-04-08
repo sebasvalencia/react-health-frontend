@@ -1,14 +1,12 @@
 import React, { useEffect, useState, Fragment } from "react";
-import clsx from 'clsx';
-import { getPatientsWithSickness } from "../../api/patients";
-import { Fab, Select, InputLabel, MenuItem, FormControl, makeStyles, Theme, createStyles, Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, Collapse, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Paper } from "@material-ui/core";
+import { getPatientsWithSickness, getAllPatients } from "../../api/patients";
+import { Select, InputLabel, MenuItem, FormControl, makeStyles, Theme, createStyles, Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, Collapse, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Paper, Fab } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { red } from "@material-ui/core/colors";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Sickness from '../Sickness/index';
+import { deleteUserSickness, postUserSickness } from "../../api/userSickness";
+import { IUserSickness, IUserSicknessApp, ISickness, Patient, ISicknessApp } from '../../models/types';
+import { getAllSickness } from "../../api/sickness";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,28 +51,39 @@ const useStylesTable = makeStyles({
     },
 });
 
+const initialSicknessAppState = {
+    id: 0,
+    name: "",
+    scientificNotation: "",
+    description: "",
+    imageUrl: ""
+}
+
+
+
 const UserSickness = () => {
 
     const classes = useStyles();
     const classesCard = useStylesCard();
     const classesTable = useStylesTable();
 
-
-    const [patientsSickness, setPatientsSickness] = useState([]);
+    const [sicks, setSicks] = useState<ISicknessApp[]>([]);
+    const [sick, setSick] = useState<ISicknessApp>(initialSicknessAppState);
+    const [patientsSickness, setPatientsSickness] = useState<IUserSicknessApp[]>([]);
+    const [isEditable, setIsEditable] = useState(false);
+    
     const [isHidden, setIsHidden] = useState(true);
-    const [expanded, setExpanded] = React.useState(false);
-
-    const [age, setAge] = React.useState('');
-
-    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setAge(event.target.value as string);
-    };
+    
+    const [sickSelect, setSickSelect] = useState(0);
+    const [patientSelect, setPatientSelect] = useState(0);
+    const [allPatient, setGetAllPatient] = useState<Patient[]>([]);
+    
 
     useEffect(() => {
-        getSickness();
+        getPSickness();
     }, []);
 
-    function getSickness() {
+    function getPSickness() {
         const res = getPatientsWithSickness();
         res.then((res: any) => {
             console.log('res', res);
@@ -82,31 +91,104 @@ const UserSickness = () => {
         });
     }
 
+    useEffect(() => {
+        getSickness();
+    }, []);
+
+    function getSickness() {
+        const res = getAllSickness();
+        res.then((res: any) => {
+            console.log('sicks', res.data.value);
+            setSicks(res.data.value);
+        });
+    }
+
+    useEffect(() => {
+        getAllPatient();
+    }, []);
+
+    function getAllPatient() {
+        const res = getAllPatients();
+        res.then((res: any) => {
+            console.log('patient', res.data.value);
+            setGetAllPatient(res.data.value);
+        });
+    }
+
+    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setSickSelect(event.target.value as number);
+    };
+
+    const handleChangePatientSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setPatientSelect(event.target.value as number);
+    };
+
     const toggleFormCreateUpdateUserSickness = () => {
+        // e.preventDefault();
         setIsHidden(!isHidden);
     }
 
-    const removeUserSickness = (row: any) => {
-        console.log('removeUserSickness', row);
+    const removeUserSickness = (idPatient: number, idSickness: number, row: any) => {
+        console.log('removeUserSickness', idPatient, idSickness, row);
 
-        // deleteSickness(row.id).then((response: any) => {
-        //     if (response.data.value.id === row.id) {
-        //         const sicknessToDelete = sicks.filter((p: any) => p.id !== row.id);
-        //         setSicks(sicknessToDelete);
-        //     }
-        // });
+        const userId = 40;
+        const sicknessId = 10;
+        if (userId === idPatient && sicknessId === idSickness) {
+            console.log(' cool');
+
+        }
     }
 
-    const updateUserSickness = (row: any) => {
+    const updateUserSickness = (row: any, patient: any) => {
         console.log('updateUserSickness', row);
 
         setIsHidden(false);
-        // setIsEditable(true);
+        setIsEditable(true);
+        setSickSelect(row.id);
+        setPatientSelect(patient.id);
+
         // setSick(sickness);
         // setName(sickness.name);
         // setScientificNotation(sickness.scientificNotation);
         // setDescription(sickness.description);
         // setImageUrl(sickness.imageUrl);
+    }
+
+    const handleSubmit = (event: any) => {
+        event.preventDefault();
+
+        const userPatient = {
+            UserId: patientSelect,
+            SicknessId: sickSelect
+        };
+        postUserSickness(userPatient).then((response: any) => {
+            console.log('response', response.data);
+
+
+            // const elementToAdd = sicks.map( (e:any) => {
+            //     if(e.id === sickSelect){
+            //         return e; 
+            //     }
+            // });
+
+            // let patientForSaveSickness = allPatient.find( e => e.id === patientSelect);
+            // console.log('patientToSave', patientForSaveSickness);
+
+            // console.log('sicks', sicks);
+            
+            // let sickToSave =  sicks.find( e => e.id === sickSelect);
+            // console.log('sickToSave', sickToSave);
+            
+            // const psickness = patientForSaveSickness.listSickness;
+
+            // console.log('psickness', psickness);
+            
+
+
+
+           // setSicks(sicks => [...sicks, response.data.value]);
+        });
+
     }
 
     return (
@@ -117,42 +199,55 @@ const UserSickness = () => {
             (
                 <Fragment>
                     <h1>User Sickness</h1>
+                    <Fab color="primary" aria-label="add" size="small">
+                        <Add onClick={() => toggleFormCreateUpdateUserSickness()} />
+                    </Fab>
+                    {
+                        !isHidden && (
+                            <FormControl className={classes.formControl}>
+                                <InputLabel id="select-label">Sickness</InputLabel>
 
+                                <Select
+                                    labelId="select-label-sick"
+                                    id="simple-select-sick"
+                                    value={sickSelect}
+                                    onChange={handleChange}>
+                                    {
+                                        sicks.map((sick: any) => (
+                                            <MenuItem key={sick.id} value={sick.id}>{sick.name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                                <Select
+                                    labelId="select-label-patient"
+                                    id="simple-select-patient"
+                                    value={patientSelect}
+                                    onChange={handleChangePatientSelect}>
+                                    {
+                                        allPatient.map((patient: any) => (
+                                               <MenuItem key={patient.id} value={patient.id}>{patient.name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                                    {isEditable ? "Edit" : "Add"}
+                                </Button>
+                            </FormControl>)
+                    }
                     {
                         patientsSickness.map((patient: any) => (
 
                             <Card key={patient.id} className={classesCard.root}>
+
                                 <CardHeader
                                     avatar={
                                         <Avatar aria-label="recipe" className={classesCard.avatar}>
                                             A
                                         </Avatar>
                                     }
-                                    action={
-                                        <IconButton aria-label="settings">
-                                            <Add onClick={() => toggleFormCreateUpdateUserSickness()} />
-                                        </IconButton>
-                                    }
                                     title={patient.name}
                                     subheader={patient.email}
                                 />
-                                {
-                                    !isHidden && (
-                                        <FormControl className={classes.formControl}>
-                                            <InputLabel id="select-label">Sickness</InputLabel>
-                                            <Select
-                                                labelId="select-label"
-                                                id="simple-select"
-                                                value={age}
-                                                onChange={handleChange}>
-                                                <MenuItem value={10}>Ten</MenuItem>
-                                                <MenuItem value={20}>Twenty</MenuItem>
-                                                <MenuItem value={30}>Thirty</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    )
-                                }
-                                
                                 <CardContent>
                                     <TableContainer component={Paper}>
                                         <Table className={classesTable.table} aria-label="simple table">
@@ -176,12 +271,12 @@ const UserSickness = () => {
                                                         <TableCell align="right">{row.description}</TableCell>
                                                         <TableCell align="right">{row.imageUrl}</TableCell>
                                                         <TableCell align="right">
-                                                            <Button onClick={() => updateUserSickness(row)}>
+                                                            <Button onClick={() => updateUserSickness(row, patient)}>
                                                                 Update
                                                     </Button>
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            <Button onClick={() => removeUserSickness(row)}>
+                                                            <Button onClick={() => removeUserSickness(patient.id, row.id, patient)}>
                                                                 Delete
                                                     </Button>
                                                         </TableCell>

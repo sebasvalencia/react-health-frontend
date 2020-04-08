@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Fab, Typography, Input, Button, makeStyles, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@material-ui/core";
-import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import { ISickness, ISicknessApp } from "../../models/types";
 import { getAllSickness, deleteSickness, postSickness, putSickness } from '../../api/sickness';
 import Paper from '@material-ui/core/Paper';

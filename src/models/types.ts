@@ -55,7 +55,7 @@ export type IUserSicknessApp = {
   email: string;
   avatarUrl: string;
   rol: number;
-  listSickness: ISickness[];
+  listSickness: ISicknessApp[];
 }
 
 export type IMedicalHistory = {
@@ -65,4 +65,9 @@ export type IMedicalHistory = {
   Treatment: string;
   AppointmentDate: Date;
   
+}
+
+export type IUSickness = {
+  UserId: number;
+  SicknessId: number;
 }
