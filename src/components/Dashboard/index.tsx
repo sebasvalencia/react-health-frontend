@@ -4,6 +4,7 @@ import { CssBaseline, Typography, List, ListItem, ListItemIcon, ListItemText, Dr
 import Header from "../Header";
 import Patients from "../Patients/index";
 import MedicalHistory from '../MedicalHistory/index';
+import Wellness from "../Wellness";
 import clsx from 'clsx';
 import {
     BrowserRouter as Router,
@@ -238,6 +239,12 @@ const routes = [
         path: "/MedicalHistory",
         title: 'Medical History',
         componentToRender: MedicalHistory
+    }
+    ,
+    {
+        path: "/Wellness",
+        title: 'Wellness',
+        componentToRender: Wellness
     }
 ];
 function Paperbase(props: PaperbaseProps) {
