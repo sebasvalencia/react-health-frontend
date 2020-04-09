@@ -63,8 +63,17 @@ export type IMedicalHistory = {
   Description: string;
   Diagnostic: string;
   Treatment: string;
-  AppointmentDate: Date;
-  
+  AppointmentDate: Date | string;
+  UserId?: number;
+}
+
+export type IMedicalHistoryApp = {
+  id: number;
+  description: string;
+  diagnostic: string;
+  treatment: string;
+  appointmentDate: Date;
+  userId: number;
 }
 
 export type IUSickness = {
