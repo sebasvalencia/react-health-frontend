@@ -1,10 +1,10 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { getPatientsWithSickness, getAllPatients } from "../../api/patients";
-import { Select, InputLabel, MenuItem, FormControl, makeStyles, Theme, createStyles, Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, Collapse, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Paper, Fab } from "@material-ui/core";
+import { Select, InputLabel, MenuItem, FormControl, makeStyles, Theme, createStyles, Card, CardHeader, Avatar, CardContent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Paper, Fab } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { red } from "@material-ui/core/colors";
-import { deleteUserSickness, postUserSickness } from "../../api/userSickness";
-import { IUserSickness, IUserSicknessApp, ISickness, Patient, ISicknessApp } from '../../models/types';
+import { postUserSickness } from "../../api/userSickness";
+import { IUserSicknessApp, Patient, ISicknessApp } from '../../models/types';
 import { getAllSickness } from "../../api/sickness";
 
 

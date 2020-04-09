@@ -1,4 +1,4 @@
-import { Patient, Credentials } from "./../models/types";
+import { Credentials } from "./../models/types";
 import axios from "axios";
 import { PatientToSave } from "../models/types";
 const urlEndpoints = "https://localhost:5001/api";

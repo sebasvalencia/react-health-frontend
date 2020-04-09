@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ISickness, IUSickness } from "../models/types";
+import { IUSickness } from "../models/types";
 const urlEndpoints = "https://localhost:5001/api";
 
 export const deleteUserSickness = (idPatient: number, idUserSickness: number) =>

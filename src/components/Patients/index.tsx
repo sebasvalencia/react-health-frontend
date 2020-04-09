@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { postPatient, getAllPatients, deletePatient, updatePatient } from '../../api/patients';
-import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions, makeStyles, createStyles, Theme, Avatar } from "@material-ui/core";
-import { Add, Edit, Delete, LocalHospital } from "@material-ui/icons";
+import { Fab, Typography, Input, Button, Grid, Card, CardMedia, CardContent, CardActions } from "@material-ui/core";
+import { Add, Edit, Delete } from "@material-ui/icons";
 import { Patient } from '../../models/types';
 import avatar from '../../assets/images/img_avatar.png';
 import "./patients.css";
