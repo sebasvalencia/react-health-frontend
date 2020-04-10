@@ -77,6 +77,7 @@ export type IMedicalHistoryApp = {
 }
 
 export type IUSickness = {
+  Id?: number;
   UserId: number;
   SicknessId: number;
 }
