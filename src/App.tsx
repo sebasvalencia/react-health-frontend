@@ -18,8 +18,8 @@ class App extends Component<{}, AppState> {
   }
 
   render() {
-    // return <Login />;
-    return <Dashboard />;
+    return <Login />;
+    // return <Dashboard />;
   }
 
 }

@@ -65,7 +65,6 @@ export class Login extends React.Component<{}, LoginState> {
         login(credentials).then(response => {
 
             if (!response.data.value) {
-                // this.setState({ alert: true });
                 this.setState({ isLogggedIn: false });
             } else {
                 this.setState({ isLogggedIn: true });

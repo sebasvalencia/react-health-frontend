@@ -39,11 +39,9 @@ class Patients extends Component<{}, PatientsState> {
 
     componentDidMount() {
         getAllPatients().then(response => {
-            console.log('response', response);
             this.setState({ loadingPatients: true });
             this.setState({ patients: response.data.value });
         }).catch(error => {
-            console.log('error:', error);
             this.setState({ loadingPatients: false });
         });
     }
@@ -136,7 +134,6 @@ class Patients extends Component<{}, PatientsState> {
         return (
             this.state.loadingPatients ?
                 (
-                    //condition 0 patients
                     <Fragment>
                         <Fab color="primary" aria-label="add">
                             <Add onClick={this.toggleFormCreateUpdatePatient} />
@@ -177,8 +174,6 @@ class Patients extends Component<{}, PatientsState> {
                         <div className='root'>
                             <Grid container
                                 spacing={3}
-                            //  alignItems="stretch"
-
                             >
                                 {
                                     this.state.patients.map((patient: Patient) => (
